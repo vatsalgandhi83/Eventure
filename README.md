@@ -11,4 +11,4 @@ mvn spring-boot:run
 
 The application will run on http://localhost:9000. 
 
-- Access the APIs, use Postman.
+- To access the APIs, use Postman. import Eventure.postman_collection.json to postman. 
