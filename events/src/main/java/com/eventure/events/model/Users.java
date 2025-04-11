@@ -1,7 +1,11 @@
 package com.eventure.events.model;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.eventure.events.dto.Ticket;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -20,6 +24,8 @@ public class Users {
 	private String phoneNo;
 	private String password;
 	private String usertype;
+	private int numberOfTickets;
+    private List<Ticket> tickets;
 
 	public String getPhoneNo() {
 		return phoneNo;
@@ -84,5 +90,23 @@ public class Users {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public int getNumberOfTickets() {
+		return numberOfTickets;
+	}
+
+	public void setNumberOfTickets(int numberOfTickets) {
+		this.numberOfTickets = numberOfTickets;
+	}
+
+	public List<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
+	}
+	
+	
 
 }
