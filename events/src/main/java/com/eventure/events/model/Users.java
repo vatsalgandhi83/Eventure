@@ -14,6 +14,7 @@ import com.eventure.events.dto.Ticket;
 @Document(collection = "Users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Users {
 
 	@Id

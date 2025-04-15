@@ -5,10 +5,14 @@ import com.eventure.events.dto.auth.inbound.SignupResponse;
 import com.eventure.events.dto.auth.outbound.KeycloakUserRequest;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
+import com.eventure.events.Services.UserService;
+import com.eventure.events.model.Users;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class AuthService {
-    
+    @Autowired
+    private UserService userService;
     private final KeycloakService keycloakService;
     
     public AuthService(KeycloakService keycloakService) {
@@ -48,6 +52,16 @@ public class AuthService {
             System.out.println("Assigning role to user =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             keycloakService.assignRole(userId, roleId, request.getRole());
             System.out.println("Role assigned successfully =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+            // // 4. Add user to Database
+            // userService.addNewUser(Users.builder()
+            //     .userId(request.getUsername())
+            //     .firstName(request.getFirstName())
+            //     .lastName(request.getLastName())
+            //     .email(request.getEmail())
+            //     .usertype(request.getRole())
+            //     .build()
+            // );
             
             return new SignupResponse("User registered successfully", "success", null);
         } catch (Exception e) {
