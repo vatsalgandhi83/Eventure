@@ -62,7 +62,7 @@ public class UserService {
 			throw new MyException("Email " + user.getEmail() + " is already registered.");
 		}
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		// user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 		return userRepo.save(user);
 	}
