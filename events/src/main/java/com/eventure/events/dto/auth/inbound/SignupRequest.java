@@ -1,11 +1,13 @@
 package com.eventure.events.dto.auth.inbound;
 
+import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 @Data
+@Builder
 public class SignupRequest {
     @NotBlank(message = "First name is required")
     private String firstName;

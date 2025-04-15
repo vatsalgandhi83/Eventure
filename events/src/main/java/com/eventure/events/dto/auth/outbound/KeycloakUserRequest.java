@@ -2,8 +2,10 @@ package com.eventure.events.dto.auth.outbound;
 
 import lombok.Data;
 import java.util.List;
+import lombok.Builder;
 
 @Data
+@Builder
 public class KeycloakUserRequest {
 
     private String username;
@@ -14,6 +16,7 @@ public class KeycloakUserRequest {
     private List<Credential> credentials;
 
     @Data
+    @Builder
     public static class Credential {
         private String type;
         private String value;

@@ -20,18 +20,20 @@ public class AuthService {
             System.out.println("Starting user registration process in Keycloak =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request);
             
             // 1. Create user in Keycloak
-            KeycloakUserRequest userRequest = new KeycloakUserRequest();
-            userRequest.setUsername(request.getUsername());
-            userRequest.setFirstName(request.getFirstName());
-            userRequest.setLastName(request.getLastName());
-            userRequest.setEmail(request.getEmail());
-            userRequest.setEnabled(true);
-            
-            KeycloakUserRequest.Credential credential = new KeycloakUserRequest.Credential();
-            credential.setType("password");
-            credential.setValue(request.getPassword());
-            credential.setTemporary(false);
-            userRequest.setCredentials(Collections.singletonList(credential));
+            KeycloakUserRequest userRequest = KeycloakUserRequest.builder()
+            .username(request.getUsername())
+            .firstName(request.getFirstName())
+            .lastName(request.getLastName())
+            .email(request.getEmail())
+            .enabled(true)
+            .credentials(Collections.singletonList(
+                KeycloakUserRequest.Credential.builder()
+                .type("password")
+                .value(request.getPassword())
+                .temporary(false)
+                .build()
+            ))
+            .build();
             
             System.out.println("Creating user in Keycloak =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userRequest);
             String userId = keycloakService.createUser(userRequest);
