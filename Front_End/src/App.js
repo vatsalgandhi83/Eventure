@@ -6,6 +6,7 @@ import ManagerDashboard from "./components/ManagerDashboard";
 import CustomerDashboard from "./components/CustomerDashboard";
 import ManagerRoute from "./privateroutes/ManagerRoute";
 import CustomerRoute from "./privateroutes/CustomerRoute";
+import Profile from "./core/Profile";
 
 const App= () => {
   return (
@@ -14,6 +15,8 @@ const App= () => {
       <Route path="/" element={<Navigate to="/signin" />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
+
+        <Route path="/profile" element={<Profile/>}/>
         
         {/* Role-based Routes */}
         <Route path="/manager/dashboard" element={<ManagerRoute element={ManagerDashboard} />} />
