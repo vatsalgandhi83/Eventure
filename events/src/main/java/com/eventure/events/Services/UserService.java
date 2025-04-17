@@ -5,7 +5,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import com.eventure.events.dto.Login;
 import com.eventure.events.exception.MyException;
 import com.eventure.events.model.Users;
 import com.eventure.events.repository.UserRepo;
@@ -22,27 +21,6 @@ public class UserService {
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	/*
-	 * public boolean authenticateUser(Login login) { Optional<Users> userOptional =
-	 * userRepo.findByEmail(login.getEmail());
-	 * 
-	 * return userOptional.isPresent() &&
-	 * passwordEncoder.matches(login.getPassword(),
-	 * userOptional.get().getPassword()); }
-	 */
-
-	public boolean authenticateUser(Login login) {
-		Users user = userRepo.findByEmail(login.getEmail()).orElseThrow(() -> new MyException("User not found"));
-
-		if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
-			System.out.println("user login >>>>>>>>>>>>>>>>>>" + login.getPassword() + user.getPassword()
-					+ login.getEmail() + !passwordEncoder.matches(login.getPassword(), user.getPassword()));
-			throw new MyException("Invalid email or password");
-		}
-
-		return true;
-	}
-
 	public List<Users> getAllUsers() {
 		return userRepo.findAll();
 	}
@@ -51,10 +29,10 @@ public class UserService {
 		if (!userRepo.existsById(id)) {
 			throw new MyException("User does not exist");
 		}
-		
 		return userRepo.findById(id);
 	}
 
+	// Move this api to AuthService or update the code for authentication
 	public Users addNewUser(Users user) {
 		System.out.println("New User Sign up request =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + user);
 		Optional<Users> existingUser = userRepo.findByEmail(user.getEmail());
@@ -67,6 +45,7 @@ public class UserService {
 		return userRepo.save(user);
 	}
 
+	// Move this api to AuthService or update the code for authentication
 	public Users updateUser(String id, Users user) {
 		if (userRepo.existsById(id)) {
 			user.setId(id);
@@ -76,6 +55,7 @@ public class UserService {
 		return null;
 	}
 
+	// Move this api to AuthService or update the code for authentication
 	public void deleteUser(String id) {
 		userRepo.deleteById(id);
 	}

@@ -24,6 +24,7 @@ public class Users {
 	private String lastName;
 	private String email;
 	private String phoneNo;
+	//need to remove password
 	private String password;
 	private String usertype;
 	private int numberOfTickets;
