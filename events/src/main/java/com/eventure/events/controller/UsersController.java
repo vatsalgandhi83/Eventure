@@ -36,13 +36,6 @@ public class UsersController {
 	@Autowired
 	private UserService userService;
 
-	/*
-	 * @ApiIgnore
-	 * 
-	 * @RequestMapping(value = "/api/user") public void redirect(HttpServletResponse
-	 * response) throws IOException { response.sendRedirect("/swagger-ui.html"); }
-	 */
-
 	@GetMapping
 	public List<Users> getAllUsers() {
 		return userService.getAllUsers();
