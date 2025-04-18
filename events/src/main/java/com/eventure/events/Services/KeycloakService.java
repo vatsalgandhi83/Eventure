@@ -23,6 +23,12 @@ public class KeycloakService {
     
     @Value("${keycloak.admin.password}")
     private String adminPassword;
+
+    @Value("${keycloak.client.id}")
+    private String clientId;
+
+    @Value("${keycloak.client.secret}")
+    private String clientSecret;
     
     private final RestTemplate restTemplate = new RestTemplate();
     
@@ -114,8 +120,6 @@ public class KeycloakService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(adminToken);
-        
-
 
         KeycloakRoleAssignmentRequest role = KeycloakRoleAssignmentRequest.builder()
         .id(roleId)
@@ -126,4 +130,98 @@ public class KeycloakService {
         restTemplate.postForEntity(assignRoleUrl, request, Void.class);
         System.out.println("Role assigned successfully =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
+
+    public KeycloakGetTokenResponse getToken(KeycloakGetTokenRequest request) {
+        System.out.println("Getting token for user =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request.getUsername());
+        String tokenUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        // 1) Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 2) Build the form‑encoded body string
+        // start with common params
+        StringBuilder body = new StringBuilder();
+        body.append("client_id=").append(clientId)
+                .append("&client_secret=").append(clientSecret)
+                .append("&grant_type=").append(request.getGrantType());
+
+        // add either username/password or refresh_token
+        if ("password".equals(request.getGrantType())) {
+            body.append("&username=").append(request.getUsername())
+                    .append("&password=").append(request.getPassword());
+        } else if ("refresh_token".equals(request.getGrantType())) {
+            body.append("&refresh_token=").append(request.getRefreshToken());
+        }
+
+        // 3) Wrap in HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(body.toString(), headers);
+
+        // 4) Call Keycloak
+        ResponseEntity<KeycloakGetTokenResponse> response = restTemplate.postForEntity(
+                tokenUrl, requestEntity, KeycloakGetTokenResponse.class
+        );
+
+        System.out.println("Token retrieved successfully =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + response.getBody());
+        return response.getBody();
+    }
+
+
+    public KeycloakIntrospectTokenResponse introspectToken(String token) {
+
+        System.out.println("Introspecting token =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + token);
+        String introspectUrl = keycloakUrl
+                + "/realms/" + realm
+                + "/protocol/openid-connect/token/introspect";
+
+        // 1) Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 2) Build the form‑encoded body string
+        // Note: URLEncoder is optional if your token/clientId/secret have no special
+        // characters that need encoding—but feel free to encode if you like.
+        String body = String.format(
+                "token=%s&client_id=%s&client_secret=%s",
+                token,
+                clientId,
+                clientSecret
+        );
+        System.out.println("Introspecting token body =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + body);
+        // 3) Wrap in HttpEntity<String>
+        HttpEntity<String> request = new HttpEntity<>(body, headers);
+
+        // 4) Call Keycloak introspection endpoint
+        ResponseEntity<KeycloakIntrospectTokenResponse> response = restTemplate
+                .postForEntity(introspectUrl, request, KeycloakIntrospectTokenResponse.class);
+
+        System.out.println("Token introspected successfully =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+                + response.getBody());
+        return response.getBody();
+    }
+
+    public void logout(String refreshToken) {
+        System.out.println("Logging out user =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + refreshToken);
+        String logoutUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
+
+        // 1) Prepare headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 2) Build the form‑encoded body string
+        String body = String.format(
+                "client_id=%s&client_secret=%s&refresh_token=%s",
+                clientId,
+                clientSecret,
+                refreshToken
+        );
+
+        // 3) Wrap in HttpEntity<String>
+        HttpEntity<String> request = new HttpEntity<>(body, headers);
+
+        // 4) Call Keycloak logout endpoint
+        restTemplate.postForEntity(logoutUrl, request, Void.class);
+        System.out.println("User logged out successfully =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    }
+
 } 
