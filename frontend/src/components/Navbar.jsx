@@ -47,6 +47,19 @@ export default function Navbar() {
               <Link href="/customer/profile" className="text-gray-600 hover:text-gray-900">
                 Profile
               </Link>
+              {/* Updated Login and Signup buttons */}
+              <Link
+                href="/login"
+                className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Signup
+              </Link>
             </div>
           </div>
 
@@ -105,6 +118,19 @@ export default function Navbar() {
               className="block px-3 py-2 text-gray-600 hover:text-gray-900"
             >
               Profile
+            </Link>
+            {/* Updated Mobile Login and Signup buttons */}
+            <Link
+              href="/login"
+              className="block px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900"
+            >
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className="block px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              Signup
             </Link>
           </div>
         </div>
