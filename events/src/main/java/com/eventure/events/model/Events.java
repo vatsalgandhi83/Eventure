@@ -30,21 +30,13 @@ public class Events{
     private String address;
     private String eventInstruction;
     private String eventCategory;
-    private List<Users> eventAttendees;
-    
-	// public List<Users> getEventAttendees() {
-	// 	return eventAttendees;
-	// }
-	// public void setEventAttendees(List<Users> eventAttendees) {
-	// 	this.eventAttendees = eventAttendees;
-	// }
-	// public int getAvailable_tickets() {
-	// 	return available_tickets;
-	// }
-	// public void setAvailable_tickets(int available_tickets) {
-	// 	this.available_tickets = available_tickets;
-	// }
-    
-    
-    
+    private int eventAttendees;
+
+    public int getAvailable_tickets() {
+        return available_tickets;
+    }
+
+    public void setAvailable_tickets(int available_tickets) {
+        this.available_tickets = available_tickets;
+    }
 }
