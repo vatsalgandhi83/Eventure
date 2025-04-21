@@ -63,5 +63,20 @@ export const dummyEvents = [
     host: "Miami Art Society",
     category: "Art",
     ticketsAvailable: 150
-  }
+  },
+  {
+    id: 6,
+    title: "Yoga in the Park",
+    date: "2024-06-01",
+    time: "08:00",
+    location: "Riverside Park, Los Angeles",
+    price: 0,
+    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1520&q=80",
+    description: "Free community yoga session in the beautiful Riverside Park.",
+    host: "Wellness Community",
+    category: "Health & Wellness",
+    ticketsAvailable: 200
+  },
+ 
+
 ]; 
