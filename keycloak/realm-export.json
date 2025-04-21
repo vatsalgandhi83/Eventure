@@ -47,6 +47,14 @@
   "failureFactor" : 30,
   "roles" : {
     "realm" : [ {
+      "id" : "f20b2a9c-ee05-432e-99ee-0b87795bdbf5",
+      "name" : "Customer",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "58344947-798a-4020-b3de-648a4fd309e9",
+      "attributes" : { }
+    }, {
       "id" : "0b2624f6-8338-4d0f-93fb-71f1657a6dbd",
       "name" : "offline_access",
       "description" : "${role_offline-access}",
@@ -72,6 +80,14 @@
       "id" : "c9a65b3d-99cd-49c4-be98-1d8206dd9bf4",
       "name" : "uma_authorization",
       "description" : "${role_uma_authorization}",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "58344947-798a-4020-b3de-648a4fd309e9",
+      "attributes" : { }
+    }, {
+      "id" : "1904bf4f-8c4c-4e8d-b2e3-9dccaf604407",
+      "name" : "Manager",
+      "description" : "",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "58344947-798a-4020-b3de-648a4fd309e9",
