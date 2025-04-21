@@ -47,7 +47,7 @@ public class UsersController {
 		return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
-	@PostMapping
+	/*@PostMapping
 	public ResponseEntity<Users> createUser(@RequestBody Users user) {
 		Users createUser = userService.addNewUser(user);
 		return new ResponseEntity<>(createUser, HttpStatus.CREATED);
@@ -63,6 +63,6 @@ public class UsersController {
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return ResponseEntity.noContent().build();
-	}
+	}*/
 
 }

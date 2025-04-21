@@ -26,13 +26,13 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/signup")
+  /*  @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@RequestBody @Valid SignupRequest request) {
         System.out.println("Received signup request =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request);
         SignupResponse response = authService.signup(request);
         System.out.println("Signup response =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + response);
         return ResponseEntity.ok(response);
-    }
+    }*/
 
     @PostMapping("/signin")
     public ResponseEntity<SigninResponse> signin(@RequestBody @Valid SigninRequest request) {
