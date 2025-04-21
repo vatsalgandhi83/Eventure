@@ -22,7 +22,7 @@ services:
       - "8080:8080"
     command:
       - start-dev
-#      - --import-realm
+      - --import-realm
 
     environment:
       KC_PROXY_ADDRESS_FORWARDING: "true"
