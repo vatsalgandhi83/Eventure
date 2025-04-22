@@ -26,9 +26,9 @@ public class BookingController {
 
     @PostMapping("/cancelBooking")
     public ResponseEntity<String> cancelBooking(
-            @RequestParam(required = true) String bookingId,
+            @RequestParam(required = true) String id,
             @RequestParam(required = false) String userId) {
-        String message = bookingService.cancelBooking(bookingId, userId);
+        String message = bookingService.cancelBooking(id, userId);
         return ResponseEntity.ok(message);
     }
 }

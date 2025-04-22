@@ -71,12 +71,15 @@ public class BookingService {
         return new BookingResponse(savedBooking, user, event);
     }
 
-    public String cancelBooking(String bookingId, String userId) {
+    public String cancelBooking(String id, String userId) {
 
-        BookingDetails booking = bookingRepo.findById(bookingId)
-                .orElseThrow(() -> new MyException("Booking not found with id: " + bookingId));
+        BookingDetails booking = bookingRepo.findById(id)
+                .orElseThrow(() -> new MyException("Booking not found with id: " + id));
+
+        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>"+booking);
 
         if (!booking.getUserId().equals(userId)) {
+            System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>"+booking);
             throw new MyException("This booking does not belong to the user: " + userId);
         }
 

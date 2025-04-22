@@ -33,7 +33,7 @@ public class AuthService {
         this.keycloakService = keycloakService;
     }
     
-   /* public SignupResponse signup(SignupRequest request) {
+   public SignupResponse signup(SignupRequest request) {
         try {
             System.out.println("Starting user registration process in Keycloak =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request);
             
@@ -73,6 +73,7 @@ public class AuthService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
+                .phoneNo(request.getPhoneNumber())
                 .usertype(request.getRole())
                 .build()
             );
@@ -82,7 +83,7 @@ public class AuthService {
             System.out.println("Error during user registration =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + e.getMessage());
             return new SignupResponse("User registration failed", "error", e.getMessage());
         }
-    }*/
+    }
 
     public SigninResponse signin(SigninRequest request) {
         try {
