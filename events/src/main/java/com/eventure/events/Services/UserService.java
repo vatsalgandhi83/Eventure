@@ -32,7 +32,7 @@ public class UserService {
 		return userRepo.findById(id);
 	}
 
-/*	// Move this api to AuthService or update the code for authentication
+	// Move this api to AuthService or update the code for authentication
 	public Users addNewUser(Users user) {
 		System.out.println("New User Sign up request =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + user);
 		Optional<Users> existingUser = userRepo.findByEmail(user.getEmail());
