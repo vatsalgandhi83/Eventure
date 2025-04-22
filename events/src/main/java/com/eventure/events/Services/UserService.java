@@ -44,7 +44,7 @@ public class UserService {
 
 		return userRepo.save(user);
 	}
-
+/*
 	// Move this api to AuthService or update the code for authentication
 	public Users updateUser(String id, Users user) {
 		if (userRepo.existsById(id)) {
