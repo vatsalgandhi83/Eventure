@@ -17,6 +17,12 @@ public class EventController {
 	  @Autowired
 	    private EventServices eventService;
 
+	@PostMapping("/createEvent")
+	public ResponseEntity<Events> createEvent(@RequestBody Events event) {
+		Events created = eventService.createEvent(event);
+		return ResponseEntity.ok(created);
+	}
+
 	    @GetMapping
 	    public List<Events> getAllEvents() {
 	        return eventService.getAllEvents();

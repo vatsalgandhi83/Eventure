@@ -22,13 +22,29 @@ public class EventServices {
 
 	private BookingRepo bookingRepo;
 	private EventRepo eventRepo;
+	private UserRepo userRepo;
 
 	@Autowired
-	public EventServices(BookingRepo bookingRepo, EventRepo eventRepo) {
+	public EventServices(BookingRepo bookingRepo, EventRepo eventRepo, UserRepo userRepo) {
 		this.bookingRepo = bookingRepo;
 		this.eventRepo = eventRepo;
+		this.userRepo = userRepo;
 	}
 
+	public Events createEvent(Events event) {
+		if (!userRepo.existsById(event.getOrganizerId())) {
+			throw new MyException("Organizer not found with ID: " + event.getOrganizerId());
+		}
+		if (event.getEventImageBase64() != null) {
+			String base64Image = event.getEventImageBase64();
+			int imageSizeBytes = (int) ((base64Image.length() * 3) / 4);
+			if (imageSizeBytes > 1024 * 1024 * 2) {
+				throw new MyException("Event banner image is too large. Max size allowed is 2MB.");
+			}
+		}
+		event.setEventAttendees(0);
+		return eventRepo.save(event);
+	}
 
 	public List<Events> getAllEvents() {
         return eventRepo.findAll();

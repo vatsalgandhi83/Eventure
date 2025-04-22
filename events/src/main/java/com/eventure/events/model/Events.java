@@ -31,6 +31,7 @@ public class Events{
     private String eventInstruction;
     private String eventCategory;
     private int eventAttendees;
+    private String eventImageBase64;
 
     public int getAvailable_tickets() {
         return available_tickets;
