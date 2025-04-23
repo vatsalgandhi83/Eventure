@@ -21,7 +21,11 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        
+        // Allow OPTIONS requests to pass through without authentication
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+
         String path = request.getRequestURI();
 
         // Check if the request is for the signup or signin endpoint
