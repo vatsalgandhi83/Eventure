@@ -1,12 +1,9 @@
 package com.eventure.events.model;
 
-import java.util.List;
-
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.eventure.events.dto.Ticket;
 
 @Setter
 @Getter
