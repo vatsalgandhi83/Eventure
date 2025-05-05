@@ -12,6 +12,7 @@ import com.eventure.events.repository.EventRepo;
 import com.eventure.events.repository.UserRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public class BookingService {
 
     public BookingResponse bookEvent(BookingRequest request) {
 
-         Users user = userRepo.findById(request.getUserId())
+        Users user = userRepo.findById(request.getUserId())
                 .orElseThrow(() -> new MyException("User not found with id: " + request.getUserId()));
 
         Events event = eventRepo.findById(request.getEventId())
@@ -64,22 +65,22 @@ public class BookingService {
         BookingDetails savedBooking = bookingRepo.save(booking);
 
         event.setAvailable_tickets(event.getAvailable_tickets() - request.getTicketCount());
-        event.setEventAttendees(event.getEventAttendees()+request.getTicketCount());
+        event.setEventAttendees(event.getEventAttendees() + request.getTicketCount());
 
         eventRepo.save(event);
-        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>"+savedBooking);
+        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>" + savedBooking);
         return new BookingResponse(savedBooking, user, event);
     }
 
-    public String cancelBooking(String id, String userId) {
+    public String cancelBooking(String bookingId, String userId) {
 
-        BookingDetails booking = bookingRepo.findById(id)
-                .orElseThrow(() -> new MyException("Booking not found with id: " + id));
+        BookingDetails booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new MyException("Booking not found with id: " + bookingId));
 
-        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>"+booking);
+        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>" + booking);
 
         if (!booking.getUserId().equals(userId)) {
-            System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>"+booking);
+            System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>" + booking);
             throw new MyException("This booking does not belong to the user: " + userId);
         }
 

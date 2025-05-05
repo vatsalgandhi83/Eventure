@@ -25,6 +25,7 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@RequestBody @Valid SignupRequest request) {
         System.out.println("Received signup request =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request);

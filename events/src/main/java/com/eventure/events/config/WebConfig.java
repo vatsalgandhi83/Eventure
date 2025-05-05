@@ -13,9 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry
-          .addInterceptor(authInterceptor)
-          .addPathPatterns("/api/**")        // secure all /api/…
-          .excludePathPatterns("/api/auth/**", "/api/user", "/api/events", "/api/events/{event_id}", "/api/bookEvent", "/api/cancelBooking", "api/events/byUser", "/api/events/createEvent"); // except your auth endpoints
+                .addInterceptor(authInterceptor)
+                .addPathPatterns("/api/**")        // secure all /api/…
+                .excludePathPatterns("/api/auth/**", "/api/user", "/api/events", "/api/events/{event_id}", "/api/bookEvent", "/api/cancelBooking", "api/events/byUser", "/api/events/createEvent", "/api/payment/create-payment"); // except your auth endpoints
     }
 
 }

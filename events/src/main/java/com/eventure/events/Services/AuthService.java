@@ -13,7 +13,9 @@ import com.eventure.events.dto.auth.outbound.KeycloakGetTokenResponse;
 import com.eventure.events.dto.auth.outbound.KeycloakGetTokenRequest;
 import com.eventure.events.dto.auth.inbound.TokenRefreshResponse;
 import org.springframework.stereotype.Service;
+
 import java.util.Collections;
+
 import com.eventure.events.Services.UserService;
 import com.eventure.events.model.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,40 +30,40 @@ public class AuthService {
     @Autowired
     private UserService userService;
     private final KeycloakService keycloakService;
-    
+
     public AuthService(KeycloakService keycloakService) {
         this.keycloakService = keycloakService;
     }
-    
-   public SignupResponse signup(SignupRequest request) {
+
+    public SignupResponse signup(SignupRequest request) {
         try {
             System.out.println("Starting user registration process in Keycloak =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request);
-            
+
             // 1. Create user in Keycloak
             KeycloakUserRequest userRequest = KeycloakUserRequest.builder()
-            .username(request.getUsername())
-            .firstName(request.getFirstName())
-            .lastName(request.getLastName())
-            .email(request.getEmail())
-            .enabled(true)
-            .credentials(Collections.singletonList(
-                KeycloakUserRequest.Credential.builder()
-                .type("password")
-                .value(request.getPassword())
-                .temporary(false)
-                .build()
-            ))
-            .build();
-            
+                    .username(request.getUsername())
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .email(request.getEmail())
+                    .enabled(true)
+                    .credentials(Collections.singletonList(
+                            KeycloakUserRequest.Credential.builder()
+                                    .type("password")
+                                    .value(request.getPassword())
+                                    .temporary(false)
+                                    .build()
+                    ))
+                    .build();
+
             System.out.println("Creating user in Keycloak =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userRequest);
             String userId = keycloakService.createUser(userRequest);
             System.out.println("User created in Keycloak with ID =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userId);
-            
+
             // 2. Get role ID
             System.out.println("Getting role ID for role =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request.getRole());
             String roleId = keycloakService.getRoleId(request.getRole());
             System.out.println("Retrieved role ID =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + roleId);
-            
+
             // 3. Assign role to user
             System.out.println("Assigning role to user =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             keycloakService.assignRole(userId, roleId, request.getRole());
@@ -69,15 +71,15 @@ public class AuthService {
 
             // 4. Add user to Database
             userService.addNewUser(Users.builder()
-                .userId(request.getUsername())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .phoneNo(request.getPhoneNumber())
-                .usertype(request.getRole())
-                .build()
+                    .userId(request.getUsername())
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .email(request.getEmail())
+                    .phoneNo(request.getPhoneNumber())
+                    .usertype(request.getRole())
+                    .build()
             );
-            
+
             return new SignupResponse("User registered successfully", "success", null);
         } catch (Exception e) {
             System.out.println("Error during user registration =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + e.getMessage());
@@ -89,29 +91,29 @@ public class AuthService {
         try {
             System.out.println("Starting user login process in Keycloak =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + request);
             KeycloakGetTokenResponse tokenResponse = keycloakService.getToken(KeycloakGetTokenRequest.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
-                .grantType("password")
-                .build());
+                    .username(request.getUsername())
+                    .password(request.getPassword())
+                    .grantType("password")
+                    .build());
             System.out.println("Token retrieved successfully =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + tokenResponse);
 
 //            String refreshToken = tokenResponse.getRefresh_token();
 
             return SigninResponse.builder()
-                .message("User login successful")
-                .status("success")
-                .accessToken(tokenResponse.getAccess_token())
-                .refreshToken(tokenResponse.getRefresh_token())
-                .refreshExpiresIn(tokenResponse.getRefresh_expires_in())
-                .build();
+                    .message("User login successful")
+                    .status("success")
+                    .accessToken(tokenResponse.getAccess_token())
+                    .refreshToken(tokenResponse.getRefresh_token())
+                    .refreshExpiresIn(tokenResponse.getRefresh_expires_in())
+                    .build();
 
 
         } catch (Exception e) {
             System.out.println("Error during user login =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + e.getMessage());
             return SigninResponse.builder()
-                .message("User login failed")
-                .status("error")
-                .build();
+                    .message("User login failed")
+                    .status("error")
+                    .build();
         }
     }
 
@@ -131,19 +133,19 @@ public class AuthService {
             System.out.println("Token introspection response =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + tokenResponse);
             if (tokenResponse.isActive()) {
                 return TokenValidationResponse.builder()
-                .valid(true)
-                .build();
+                        .valid(true)
+                        .build();
             } else {
                 return TokenValidationResponse.builder()
-                .valid(false)
+                        .valid(false)
 
-                .build();
+                        .build();
             }
         } catch (Exception e) {
             System.out.println("Error during token validation =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + e.getMessage());
             return TokenValidationResponse.builder()
-            .valid(false)
-            .build();
+                    .valid(false)
+                    .build();
         }
     }
 
@@ -152,18 +154,18 @@ public class AuthService {
         try {
 
             KeycloakGetTokenResponse tokenResponse = keycloakService.getToken(KeycloakGetTokenRequest.builder()
-                .refreshToken(refreshToken)
-                .grantType("refresh_token")
-                .build());
+                    .refreshToken(refreshToken)
+                    .grantType("refresh_token")
+                    .build());
             return TokenRefreshResponse.builder()
-                .refreshToken(tokenResponse.getRefresh_token())
-                .accessToken(tokenResponse.getAccess_token())
-                .refreshExpiresIn(tokenResponse.getRefresh_expires_in())
-                .build();
-            
+                    .refreshToken(tokenResponse.getRefresh_token())
+                    .accessToken(tokenResponse.getAccess_token())
+                    .refreshExpiresIn(tokenResponse.getRefresh_expires_in())
+                    .build();
+
         } catch (Exception e) {
             return TokenRefreshResponse.builder()
-                .build();
+                    .build();
         }
     }
 

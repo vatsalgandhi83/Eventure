@@ -1,7 +1,6 @@
 package com.eventure.events.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -16,34 +15,34 @@ import java.util.Optional;
 @Validated
 public class UserService {
 
-	@Autowired
-	private UserRepo userRepo;
+    @Autowired
+    private UserRepo userRepo;
 
-	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+   // private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	public List<Users> getAllUsers() {
-		return userRepo.findAll();
-	}
+    public List<Users> getAllUsers() {
+        return userRepo.findAll();
+    }
 
-	public Optional<Users> getUserById(String id) {
-		if (!userRepo.existsById(id)) {
-			throw new MyException("User does not exist");
-		}
-		return userRepo.findById(id);
-	}
+    public Optional<Users> getUserById(String id) {
+        if (!userRepo.existsById(id)) {
+            throw new MyException("User does not exist");
+        }
+        return userRepo.findById(id);
+    }
 
-	// Move this api to AuthService or update the code for authentication
-	public Users addNewUser(Users user) {
-		System.out.println("New User Sign up request =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + user);
-		Optional<Users> existingUser = userRepo.findByEmail(user.getEmail());
-		if (existingUser.isPresent()) {
-			throw new MyException("Email " + user.getEmail() + " is already registered.");
-		}
+    // Move this api to AuthService or update the code for authentication
+    public Users addNewUser(Users user) {
+        System.out.println("New User Sign up request =>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + user);
+        Optional<Users> existingUser = userRepo.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            throw new MyException("Email " + user.getEmail() + " is already registered.");
+        }
 
-		// user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-		return userRepo.save(user);
-	}
+        return userRepo.save(user);
+    }
 /*
 	// Move this api to AuthService or update the code for authentication
 	public Users updateUser(String id, Users user) {
