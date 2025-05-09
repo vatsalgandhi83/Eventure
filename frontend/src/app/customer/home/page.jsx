@@ -23,13 +23,14 @@ export default function HomePage() {
           router.push('/login');
           return;
         }
-
         const response = await fetch('http://localhost:9000/api/events/', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
-          }
+          },
+          credentials: 'include' // ✅ only needed if backend uses cookies (e.g., session-based auth)
         });
+        
         console.log("Event Response",   response);
 
         if (!response.ok) {
@@ -91,30 +92,7 @@ export default function HomePage() {
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filter Section */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search events..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
-          
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Filter by location..."
-              value={locationQuery}
-              onChange={(e) => setLocationQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
-        </div>
+  
 
         {/* Events Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
