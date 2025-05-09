@@ -1,6 +1,5 @@
 'use client';
 
-
 /////// this is a trial github practice 
 
 import Link from 'next/link';
@@ -35,15 +34,13 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-        credentials: 'include' // This is important for cookies
+        credentials: 'include'
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Store the access token in localStorage
         localStorage.setItem('accessToken', data.accessToken);
-        // Redirect to home page or dashboard
         router.push('/customer/home');
       } else {
         setError(data.message || 'Login failed');
@@ -55,20 +52,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
-        </h2>
+    <div className="min-h-screen flex">
+      {/* Left side - Eventure Branding */}
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-purple-600 items-center justify-center">
+        <div className="text-center text-white p-8">
+          <h1 className="text-6xl font-bold mb-4">Eventure</h1>
+          
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      {/* Right side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-50">
+        <div className="w-full max-w-md p-8">
+          <div className="lg:hidden mb-8 text-center">
+            <h1 className="text-4xl font-bold text-blue-600">Eventure</h1>
+          </div>
+          
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Welcome back
+          </h2>
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">
               {error}
             </div>
           )}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -124,26 +133,16 @@ export default function LoginPage() {
             </div>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Don't have an account?
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 text-center">
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
               <Link
                 href="/signup"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
                 Sign up
               </Link>
-            </div>
+            </p>
           </div>
         </div>
       </div>
