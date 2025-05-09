@@ -12,10 +12,11 @@ import com.eventure.events.repository.EventRepo;
 import com.eventure.events.repository.UserRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class BookingService {
@@ -23,16 +24,17 @@ public class BookingService {
     private final BookingRepo bookingRepo;
     private final EventRepo eventRepo;
     private final UserRepo userRepo;
+    private final EmailService emailService;
 
     @Autowired
-    public BookingService(BookingRepo bookingRepo, EventRepo eventRepo, UserRepo userRepo) {
+    public BookingService(BookingRepo bookingRepo, EventRepo eventRepo, UserRepo userRepo, EmailService emailService) {
         this.bookingRepo = bookingRepo;
         this.eventRepo = eventRepo;
         this.userRepo = userRepo;
+        this.emailService = emailService;
     }
 
     public BookingResponse bookEvent(BookingRequest request) {
-
         Users user = userRepo.findById(request.getUserId())
                 .orElseThrow(() -> new MyException("User not found with id: " + request.getUserId()));
 
@@ -50,7 +52,7 @@ public class BookingService {
 
         List<Ticket> ticketList = new ArrayList<>();
         for (int i = 0; i < request.getTicketCount(); i++) {
-            String ticketId = "T" + UUID.randomUUID().toString().substring(0, 8); // example: T8b2d4f1c
+            String ticketId = "T" + UUID.randomUUID().toString().substring(0, 8);
             Ticket ticket = new Ticket(ticketId, request.getTicketPrice(), request.getEventId());
             ticketList.add(ticket);
         }
@@ -68,7 +70,33 @@ public class BookingService {
         event.setEventAttendees(event.getEventAttendees() + request.getTicketCount());
 
         eventRepo.save(event);
-        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>" + savedBooking);
+
+        // Send confirmation email
+        try {
+            Map<String, String> emailVariables = new HashMap<>();
+            emailVariables.put("userName", user.getFirstName() + " " + user.getLastName());
+            emailVariables.put("eventName", event.getEventName());
+            emailVariables.put("eventDate", event.getEventDateTime().toString());
+            emailVariables.put("eventAddress", event.getAddress() + ", " + event.getCity() + ", " + event.getState() + " " + event.getZipCode());
+            emailVariables.put("eventInstruction", event.getEventInstruction() != null ? event.getEventInstruction() : "No specific instructions provided.");
+            
+            String gmapUrl = String.format("https://www.google.com/maps/search/?api=1&query=%s,%s,%s,%s",
+                    event.getAddress(), event.getCity(), event.getState(), event.getZipCode());
+            emailVariables.put("gmapUrl", gmapUrl);
+
+            System.out.println("Attempting to send email to: " + user.getEmail());
+            emailService.sendHtmlEmail(
+                user.getEmail(),
+                "Booking Confirmation - " + event.getEventName(),
+                "Emailtemplate/booking-confirmation.html",
+                emailVariables
+            );
+            System.out.println("Email sent successfully to: " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("Failed to send confirmation email: " + e.getMessage());
+            e.printStackTrace(); // This will print the full stack trace
+        }
+
         return new BookingResponse(savedBooking, user, event);
     }
 

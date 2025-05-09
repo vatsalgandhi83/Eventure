@@ -2,6 +2,7 @@ package com.eventure.events.controller;
 
 import com.eventure.events.Services.PaymentService;
 import com.eventure.events.dto.PaymentRequest;
+import com.eventure.events.dto.PaymentResponse;
 
 import jakarta.validation.Valid;
 
@@ -18,16 +19,18 @@ public class PaymentController {
     private PaymentService payPalService;
 
     @PostMapping("/create-payment")
-    public ResponseEntity<?> createPayment(@RequestBody @Valid PaymentRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || request.getAmount() == null || request.getAmount().isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid or missing amount");
+    public ResponseEntity<PaymentResponse> createPayment(@RequestBody @Valid PaymentRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .findFirst()
+                .orElse("Invalid request parameters");
+            return ResponseEntity.badRequest()
+                .body(new PaymentResponse("error", errorMessage, "VALIDATION_ERROR", null));
         }
-        try {
-            String approvalUrl = payPalService.createPayment(request.getAmount());
-            return ResponseEntity.ok(approvalUrl);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Payment creation failed: " + e.getMessage());
-        }
+
+        PaymentResponse response = payPalService.createPayment(request.getAmount());
+        return ResponseEntity.ok(response);
     }
 }
 
