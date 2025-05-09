@@ -168,26 +168,3 @@ public class AuthService {
                     .build();
         }
     }
-
-    public String fetchRefreshToken(HttpServletRequest request) {
-        String refreshToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals("refreshToken")) {
-                    refreshToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        return refreshToken;
-    }
-
-    public void clearRefreshTokenCookie(HttpServletResponse response) {
-        Cookie clearedCookie = new Cookie("refreshToken", null);
-        clearedCookie.setHttpOnly(true);
-        clearedCookie.setPath("/");
-        clearedCookie.setMaxAge(0);
-        response.addCookie(clearedCookie);
-    }
-
-}
