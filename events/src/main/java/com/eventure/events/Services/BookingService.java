@@ -101,14 +101,10 @@ public class BookingService {
     }
 
     public String cancelBooking(String bookingId, String userId) {
-
         BookingDetails booking = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new MyException("Booking not found with id: " + bookingId));
 
-        System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>" + booking);
-
         if (!booking.getUserId().equals(userId)) {
-            System.out.println("Booking Obj >>>>>>>>>>>>>>>>>>>>>>" + booking);
             throw new MyException("This booking does not belong to the user: " + userId);
         }
 
@@ -116,17 +112,43 @@ public class BookingService {
             throw new MyException("Booking is already cancelled.");
         }
 
-        booking.setBookingStatus("CANCELLED");
-        bookingRepo.save(booking);
+        // Get user and event details for the email
+        Users user = userRepo.findById(userId)
+                .orElseThrow(() -> new MyException("User not found with id: " + userId));
 
         String eventId = booking.getTickets().get(0).getEventId();
         Events event = eventRepo.findById(eventId)
                 .orElseThrow(() -> new MyException("Event not found with id: " + eventId));
 
+        // Update booking status
+        booking.setBookingStatus("CANCELLED");
+        bookingRepo.save(booking);
+
+        // Update event details
         event.setAvailable_tickets(event.getAvailable_tickets() + booking.getTicketCount());
         event.setEventAttendees(Math.max(0, event.getEventAttendees() - booking.getTicketCount()));
-
         eventRepo.save(event);
+
+        // Send cancellation email
+        try {
+            Map<String, String> emailVariables = new HashMap<>();
+            emailVariables.put("userName", user.getFirstName() + " " + user.getLastName());
+            emailVariables.put("eventName", event.getEventName());
+            emailVariables.put("eventDate", event.getEventDateTime().toString());
+            emailVariables.put("eventAddress", event.getAddress() + ", " + event.getCity() + ", " + event.getState() + " " + event.getZipCode());
+
+            emailService.sendHtmlEmail(
+                user.getEmail(),
+                "Booking Cancelled - " + event.getEventName(),
+                "Emailtemplate/booking-cancellation.html",
+                emailVariables
+            );
+            System.out.println("Cancellation email sent successfully to: " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("Failed to send cancellation email: " + e.getMessage());
+            e.printStackTrace();
+            // Don't throw the exception as the booking is already cancelled
+        }
 
         return "Booking cancelled successfully.";
     }
