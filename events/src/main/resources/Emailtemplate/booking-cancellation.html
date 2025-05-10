@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Cancelled</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { padding: 20px; background: #fff3f3; border-radius: 8px; }
+        .header { color: #e52d2d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="cid:logo" alt="Eventure Logo" style="height:60px; margin-bottom:20px;">
+        <h2 class="header">Booking Cancelled</h2>
+        <p>Dear {{userName}},</p>
+        <p>Your booking for <strong>{{eventName}}</strong> has been cancelled.</p>
+        <p><strong>Date & Time:</strong> {{eventDate}}</p>
+        <p><strong>Venue:</strong> {{eventAddress}}</p>
+        <p>If you have any questions, please contact our support team.</p>
+        <br>
+        <p>We hope to see you at another event soon!</p>
+        <p>Best regards,<br>Eventure Team</p>
+    </div>
+</body>
+</html> 
