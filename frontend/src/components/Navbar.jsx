@@ -1,18 +1,142 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, MapPin, Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, MapPin, Menu, X, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is logged in and get their role
+    const token = localStorage.getItem('accessToken');
+    const role = localStorage.getItem('userRole');
+    setIsLoggedIn(!!token);
+    setUserRole(role || '');
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userRole');
+    setIsLoggedIn(false);
+    setUserRole('');
+    router.push('/login');
+  };
+
+  const renderAuthButtons = () => {
+    if (isLoggedIn) {
+      return (
+        <button
+          onClick={handleLogout}
+          className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900 flex items-center gap-2"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
+      );
+    }
+
+    return (
+      <>
+        <Link
+          href="/login"
+          className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900"
+        >
+          Login
+        </Link>
+        <Link
+          href="/signup"
+          className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          Signup
+        </Link>
+      </>
+    );
+  };
+
+  const renderNavigationLinks = () => {
+    if (!isLoggedIn) return null;
+
+    if (userRole === 'Manager') {
+      return (
+        <div className="flex items-center space-x-4">
+          <Link href="/manager/events" className="text-gray-600 hover:text-gray-900">
+            My Events
+          </Link>
+          <Link href="/manager/profile" className="text-gray-600 hover:text-gray-900">
+            Profile
+          </Link>
+        </div>
+      );
+    }
+
+    // Default to Customer view
+    return (
+      <div className="flex items-center space-x-4">
+        <Link href="/customer/tickets" className="text-gray-600 hover:text-gray-900">
+          My Tickets
+        </Link>
+        <Link href="/customer/profile" className="text-gray-600 hover:text-gray-900">
+          Profile
+        </Link>
+      </div>
+    );
+  };
+
+  const renderMobileNavigationLinks = () => {
+    if (!isLoggedIn) return null;
+
+    if (userRole === 'Manager') {
+      return (
+        <>
+          <Link
+            href="/manager/events"
+            className="block px-3 py-2 text-gray-600 hover:text-gray-900"
+          >
+            My Events
+          </Link>
+          <Link
+            href="/manager/profile"
+            className="block px-3 py-2 text-gray-600 hover:text-gray-900"
+          >
+            Profile
+          </Link>
+        </>
+      );
+    }
+
+    // Default to Customer view
+    return (
+      <>
+        <Link
+          href="/customer/tickets"
+          className="block px-3 py-2 text-gray-600 hover:text-gray-900"
+        >
+          My Tickets
+        </Link>
+        <Link
+          href="/customer/profile"
+          className="block px-3 py-2 text-gray-600 hover:text-gray-900"
+        >
+          Profile
+        </Link>
+      </>
+    );
+  };
 
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/customer/home" className="text-xl font-bold text-gray-800">
+            <Link 
+              href={isLoggedIn ? (userRole === 'Manager' ? '/manager/home' : '/customer/home') : '/'} 
+              className="text-xl font-bold text-gray-800"
+            >
               Eventure
             </Link>
           </div>
@@ -37,29 +161,10 @@ export default function Navbar() {
               <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
 
+            {renderNavigationLinks()}
+
             <div className="flex items-center space-x-4">
-              <Link href="/customer/events" className="text-gray-600 hover:text-gray-900">
-                My Events
-              </Link>
-              <Link href="/customer/tickets" className="text-gray-600 hover:text-gray-900">
-                My Tickets
-              </Link>
-              <Link href="/customer/profile" className="text-gray-600 hover:text-gray-900">
-                Profile
-              </Link>
-              {/* Updated Login and Signup buttons */}
-              <Link
-                href="/login"
-                className="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Signup
-              </Link>
+              {renderAuthButtons()}
             </div>
           </div>
 
@@ -101,37 +206,32 @@ export default function Navbar() {
               <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
 
-            <Link
-              href="/customer/events"
-              className="block px-3 py-2 text-gray-600 hover:text-gray-900"
-            >
-              My Events
-            </Link>
-            <Link
-              href="/customer/tickets"
-              className="block px-3 py-2 text-gray-600 hover:text-gray-900"
-            >
-              My Tickets
-            </Link>
-            <Link
-              href="/customer/profile"
-              className="block px-3 py-2 text-gray-600 hover:text-gray-900"
-            >
-              Profile
-            </Link>
-            {/* Updated Mobile Login and Signup buttons */}
-            <Link
-              href="/login"
-              className="block px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="block px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              Signup
-            </Link>
+            {renderMobileNavigationLinks()}
+
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900 flex items-center justify-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="block px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="block px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Signup
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
