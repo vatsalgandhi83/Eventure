@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { User, Mail, Lock, UserPlus } from 'lucide-react';
+import { User, Mail, Lock, UserPlus, X, CheckCircle, AlertCircle, UserCog } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SignupPage() {
@@ -19,7 +19,21 @@ export default function SignupPage() {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
+
+  // Auto-hide toast after 5 seconds
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(() => {
+        setToast(prev => ({ ...prev, show: false }));
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.show]);
+
+  const showToast = (message, type = 'error') => {
+    setToast({ show: true, message, type });
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -48,6 +62,10 @@ export default function SignupPage() {
       newErrors.password = 'Password must be at least 6 characters';
     }
 
+    if (!formData.role) {
+      newErrors.role = 'Please select a role';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -65,10 +83,6 @@ export default function SignupPage() {
         [name]: ''
       }));
     }
-    // Clear API error when user makes any change
-    if (apiError) {
-      setApiError('');
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -79,7 +93,6 @@ export default function SignupPage() {
     }
 
     setIsSubmitting(true);
-    setApiError('');
 
     try {
       const response = await fetch('http://localhost:9000/api/auth/signup', {
@@ -93,14 +106,17 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Signup successful
-        router.push('/login?signup=success');
+        showToast('Account created successfully! Redirecting to login...', 'success');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
       } else {
-        // Handle API error
-        setApiError(data.message || 'Signup failed. Please try again.');
+        // Show detailed error message from backend
+        const errorMessage = data.message || data.error || 'Signup failed. Please try again.';
+        showToast(errorMessage, 'error');
       }
     } catch (error) {
-      setApiError('An error occurred. Please try again.');
+      showToast('Network error. Please check your connection and try again.', 'error');
       console.error('Signup error:', error);
     } finally {
       setIsSubmitting(false);
@@ -109,8 +125,38 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-4 right-4 z-50 animate-slide-in">
+          <div className={`flex items-center p-4 rounded-lg shadow-lg ${
+            toast.type === 'success' 
+              ? 'bg-green-50 border border-green-200' 
+              : 'bg-red-50 border border-red-200'
+          }`}>
+            <div className="flex-shrink-0">
+              {toast.type === 'success' ? (
+                <CheckCircle className="h-5 w-5 text-green-400" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-400" />
+              )}
+            </div>
+            <div className={`ml-3 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' : 'text-red-800'
+            }`}>
+              {toast.message}
+            </div>
+            <button
+              onClick={() => setToast(prev => ({ ...prev, show: false }))}
+              className="ml-4 flex-shrink-0"
+            >
+              <X className={`h-4 w-4 ${
+                toast.type === 'success' ? 'text-green-400' : 'text-red-400'
+              }`} />
+            </button>
+          </div>
+        </div>
+      )}
 
-      
       <main className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white shadow sm:rounded-lg">
           <div className="px-4 py-5 sm:p-6">
@@ -120,12 +166,6 @@ export default function SignupPage() {
                 Join Eventure to discover and book amazing events
               </p>
             </div>
-
-            {apiError && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <span className="block sm:inline">{apiError}</span>
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
@@ -247,6 +287,32 @@ export default function SignupPage() {
                 </div>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                  Role
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <UserCog className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    name="role"
+                    id="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className={`appearance-none block w-full pl-10 px-3 py-2 border ${
+                      errors.role ? 'border-red-300' : 'border-gray-300'
+                    } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                  >
+                    <option value="Customer">Customer</option>
+                    <option value="Manager">Manager</option>
+                  </select>
+                </div>
+                {errors.role && (
+                  <p className="mt-1 text-sm text-red-600">{errors.role}</p>
                 )}
               </div>
 
